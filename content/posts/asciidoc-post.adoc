@@ -1,0 +1,404 @@
+---
+title: "Asciidoc Post"
+date: 2021-01-01T10:28:16+08:00
+draft: true
+---
+
+測試Asciidoc更新到github
+
+== 資料夾結構
+
+. archetype
+
+- like a meta-data，產生預設的frontMatter
+
+. content
+
+- 基本上所有內容都放在這裡，例如，你要寫一個部落格，文章都放在此資料夾。
+
+- 假如你要寫一個網頁，html檔也放在這裡面。
+
+. data 
+
+- 就像是資料庫存放位置，當然，hugo是產生靜態網頁，不會直接從資料庫連線獲取資訊，但你可以將json檔放在此資料夾，去顯示對應的資料。
+
+. layouts
+
+- 放一些重複的模板，例如寫一個header.html 或 footer.html讓每頁都去呼叫這些模板
+
+. static
+
+- 放image，css，js檔等等不會改變的檔案。
+
+. theme
+
+- 可以使用別人寫好的樣板(主題)，去 https://themes.gohugo.io/[官網主題] 選擇一個你喜歡的hugo主題，git submodule到你的hugo 資料夾，下載的主體通常會放在此資料夾。
+
+. config.toml
+
+- 像是yaml檔，設定你網頁的參數
+
+NOTE: 不一定每個資料夾都會用到，有可能你只使用theme 跟 content 來完成簡單的blog
+
+== Content
+
+Hugo 分成兩種頁面跟一種特殊的頁面：
+
+. List Page
+
+. Single Page
+
+. _index.md
+
+- hugo 只會自動產生第一層的資料夾，不會產生第二層以下的資料夾
+
+- 如果要產生第二層以下的資料夾頁，可以加上_index.md到該層資料夾
+
+- _index.md 可以用來控制及增加一些特定的內容於List Page 之頂端的頁面。
+
+== frontMatter
+
+. frontMatter是content裡面每篇內文的meta-data
+
+. 格式可以為yaml,toml,json
+
+. 預設格式為 yaml
+
+yaml 用 三條 - 隔開，例如：
+
+[source=yaml]
+----
+---
+title: "A"
+date: 2020-11-30T16:32:47+08:00
+draft: true
+---
+----
+
+toml 用 三個 + 隔開，例如：
+
+[source=toml]
+----
++++
+title =  "A"
+date =  2020-11-30T16:32:47+08:00
+draft =  true
++++
+----
+
+[start=4]
+. frontMatter 可以讓你輕鬆展示檔案的名字、日期等檔案資訊。
+
+. 可以自己客製你想要的forntMatter ，例如：
+
+[source=yaml]
+----
+---
+title: "A"
+date: 2020-11-30T16:32:47+08:00
+draft: true
+Author: "Arthur"
+---
+----
+
+[start=6]
+. 利用frontMatter管理你的template，你可以想像成用不同標籤分類你的檔案，再用Hugo去做不同標籤相對應的排版。
+
+== Archetypes
+
+. 用來設定預設的frontMatter，寫在default.md裡。
+
+. 如果想要某個資料夾的預設檔案為別的frontMatter，就建立一個資料夾名.md，將預設frontMatter寫在裡面。
+
+== Shortcodes
+
+. 為了簡化網址，讓撰寫的文章更簡潔
+
+. shortcodes 格式
+
+[source=markdown]
+----
+----
+[start=3]
+. shortcodes 範例
+
+{{< youtube XXX>}}
+
+XXX 為 youtube id
+
+== Taxonomies
+
+. 分類你的分頁，使用標籤或分類，預設有 tags 跟 categories 
+
+. 放在formatMatter裡面，讓Hugo幫你分類
+
+. taxonomy範例
+
+[source=yaml]
+----
+tags: ["tag1","tag2","tag3"]
+categories: ["cat1"]
+----
+
+[start=4]
+. 客製化Taxonomies
+
+- 在config.toml加上
+
+[source=toml]
+----
+[taxonomies]
+    tag = "tags"
+    category = "categories"
+    mood = "moods"
+----
+前面單數，後面複數
+
+IMPORTANT: 如果要客製化Taxonomies，要加上 tag 跟 category，否則預設的Taxonomies 會失效。
+
+== Template Basics
+
+. hugo是由list page 跟 single page 組成，所以基本的樣式就是在layouts資料夾底下有
+個_default資料夾，裡面有list.html 跟 single.html。
+
+== List Page Template
+
+建立list page template步驟
+
+. 建立一個_default資料夾，並且在裡面新增一個list.html
+
+. 加上html 跟 hugo 變數
+
+[source=hugo]
+----
+{{.Content}} 
+----
+這變數讓每個list page 顯示 _index.md的內容
+
+[source=hugo]
+----
+{{ range .Pages}}
+    <ul>
+       <li>
+         <a href="{{.RelPermalink}}">{{.Title}}</a>
+       </li>
+     </ul>
+{{ end }}
+----
+
+Hugo的 forEach
+
+== Single Page Template
+
+建立Single page template步驟
+
+. 建立一個_default資料夾，並且在裡面新增一個single.html
+
+. 加上html 跟 hugo變數
+
+[source=hugo]
+----
+  <h1>Header</h1>
+  <hr>
+  <h3>{{.Title}}</h3>
+  <h4>{{.Date}}</h4>
+  {{.Content}}
+  <hr>
+  <h2>Footer</h2>
+----
+這變數讓每個single page 顯示 每個single page的內容
+
+== Home Page Templates
+
+建立Single page template步驟
+
+. 在layouts新增一個index.html
+
+. 加上html 跟 hugo變數
+
+== Section Templates
+
+建立部分的template 
+
+. 在layouts新增跟你content裡面的資料夾名稱一樣的資料夾
+
+. 依照需求增加 list.html 或 single.html
+
+== Base Templates & Blocks
+
+重複的程式碼一直是不好的寫法，可以用建立一個共同的模板，例如<header>。
+
+. 在_default 資料夾裡面新增一個 baseof.html
+
+. 在baseof.html 裡面使用block，例如：
+
+[source=hugo]
+----
+<html>
+<head>
+     <meta charset="UTF-8">
+
+     <title>Document</title>
+</head>
+<body>
+    {{ block "main" .}}
+
+    {{end}}
+</body>
+</html>
+----
+
+[start=3]
+. 到list.html(或是其他樣板裡面)使用剛剛建立的block，例如：
+
+[source=hugo]
+----
+{{ define "main"}}
+    This is the list template
+{{end}}
+----
+
+[start=4]
+. block的好處是可以彈性決定要不要繼承，也就是說你在baseof.html開一個block，裡面打了一串html，如果你list.html有define 剛剛的block，你就可以複寫，如果沒有define，就是用baseof.html 本來的block的內容。
+
+== Variables
+
+. Hugo的變數有很多，可參考
+https://gohugo.io/variables[Hugo變數文件]。
+
+. 變數用 {{  }} 包起來。
+
+. 以single page來說，可以用{{ .Title }}、{{ .Date }}、{{ .URL }}來顯示每頁的資料。
+
+. 如果要抓客製化的frontMatter , 就用{{ .Params.XXX}} (XXX為frontMatter設置的變數)
+
+. 變數也可以單獨宣告，只要使用$開頭，加上變數名。可以宣告的型態有字串、數字、布林值。例如：
+
+[source=hugo]
+----
+{{ $varName := "test"}}
+{{ $varBoolean := true}}
+{{ $varInt := 3 }}
+----
+此時只要在下方使用
+{{ $varName }}，頁面就會顯示 test。
+
+NOTE: 變數可以應用的範圍很多，例如用變數去顯示不同的顏色、字體大小等CSS排版，或是用變數顯示不同的內容、做計算等等。
+
+== Functions
+
+. Functions 函數，可參考
+https://gohugo.io/variables/[Hugo函數文件]
+
+. Functions只能用在layouts資料夾，不能用在contents資料夾。
+
+. Functions 格式為 {{ function param1 param2 }}，例如： 
+
+[source=hugo]
+----
+{{ truncate 10 "這是一篇關於你與我的文章"}} //<1>
+{{ add 1 5 }} //<2>
+{{ sub 1 5}} //<3>
+----
+<1> truncate 取前10個字，後面...代替，適合用在list.html。的一部分內容
+<2> add 加法的函數使用方式
+<3> sub 減法的函數
+
+[start=4]
+. list.html很常用的一個函數為range，它屬於一種迴圈函數。
+
+[source=hugo]
+----
+{{ range .Pages }} //<1>
+
+
+{{ end }} <2>
+----
+
+<1> .Pages表示抓到所有內容
+<2> 記得用end把迴圈包起來
+
+== If Statements
+
+判斷式規則：{{ if operator param1 param2}}
+
+operator 有
+
+- eq 
+- lt(less than)
+- le(less than and equal to)
+- gt(greater than)
+- ge(greater than equal to)
+- not
+
+例如：
+[source=hugo]
+----
+  {{ $var1 := 1}}
+  {{ $var2 := 2}}
+  {{ if eq $var1 $var2}}
+    true
+  {{else}}
+    false
+  {{end}}
+----
+
+如果要用not，記得將條件包在()裡面，例如：
+
+[source=hugo]
+----
+  {{ $var1 := 1}}
+  {{ $var2 := 2}}
+  {{ if not (eq $var1 $var2) }}
+    true
+  {{else}}
+    false
+  {{end}}
+----
+
+如果要兩個條去做and 或 or ，格式為{{ if and (cond1) (cond2) }}，例如：
+
+[source=hugo]
+----
+  {{ if and (lt $var1 $var2) (gt $var2 $var1) }} //<1>
+    true
+  {{else}}
+    false
+  {{end}}
+----
+
+<1> lt $var1 $var2 為 $var1 less than $var2
+
+if 的應用：可以依照現在在哪一頁的標籤做不同的CSS，範例：
+
+[source=hugo]
+----
+{{ $curTitle := .Title }} /<1>
+{{ range .Site.Pages }} /<2>
+  <li>
+      <a href="{{.URL}}" 
+      style="
+      {{if eq $curTitle .Title }} background-color: yellow; 
+      {{end}}
+      "> {{.Title}}</a>
+  </li>
+{{end}}
+----
+
+<1> 為了區分該頁是哪頁所存的變數
+<2> 在網站的每一頁(開始跑回圈)
+
+== Data Files
+
+- 雖然靜態網站不適合連DB，但你可以用一些格式儲存資料，如json，yaml，toml等等。
+
+- 將儲存好的資料放在data 資料夾做使用，假如檔名為test.json，這時只要用
+
+[source= hugo]
+----
+{{ range Site.Data.test }}
+    
+{{ end }}
+----
+
+就可以跑全部的json資訊了
